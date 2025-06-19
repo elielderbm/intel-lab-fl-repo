@@ -22,7 +22,7 @@ DATA_PATH = next(
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../ml_results_random_forest')
 N_ESTIMATORS = 100  # Reduzido para menor uso de recurso e memória
-CLIENT_ID = sys.argv[1] if len(sys.argv) > 1 else 'client1'
+CLIENT_ID = sys.argv[1] if len(sys.argv) > 1 else 'client3'
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
