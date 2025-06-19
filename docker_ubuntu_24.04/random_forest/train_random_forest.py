@@ -26,6 +26,16 @@ CLIENT_ID = sys.argv[1] if len(sys.argv) > 1 else 'client1'
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+# Função para garantir que bootstrap seja booleano
+def to_bool(val):
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, (int, np.integer)):
+        return bool(val)
+    if isinstance(val, str):
+        return val.lower() in ['true', '1', 'yes']
+    return False
+
 # Função de treinamento e avaliação
 def train_and_evaluate(X_train, X_test, y_train, y_test, client_id, prev_params=None):
     start_time = time.time()
@@ -39,7 +49,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, client_id, prev_params=
             min_samples_split=prev_params.get('min_samples_split', 2),
             min_samples_leaf=prev_params.get('min_samples_leaf', 2),  # Aumenta folhas mínimas
             max_features=prev_params.get('max_features', 'auto'),
-            bootstrap=prev_params.get('bootstrap', True),
+            bootstrap=to_bool(prev_params.get('bootstrap', True)),
             n_jobs=2  # Limita a apenas 1 núcleo para reduzir uso de CPU/memória
         )
         model.fit(X_train, y_train)
@@ -109,7 +119,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, client_id, prev_params=
         'min_samples_split': model.min_samples_split,
         'min_samples_leaf': model.min_samples_leaf,
         'max_features': model.max_features,
-        'bootstrap': model.bootstrap
+        'bootstrap': bool(model.bootstrap)
     }
     with open(os.path.join(OUTPUT_DIR, f'params_{client_id}.json'), 'w') as f:
         json.dump(params_dict, f, indent=4)

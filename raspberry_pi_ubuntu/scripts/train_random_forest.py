@@ -11,6 +11,16 @@ import os
 import sys
 import json
 
+# Função para garantir que bootstrap seja booleano
+def to_bool(val):
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, (int, np.integer)):
+        return bool(val)
+    if isinstance(val, str):
+        return val.lower() in ['true', '1', 'yes']
+    return False
+
 # Configuração
 DATA_PATH = next(
     (os.path.join(root, 'intel_lab_data_cleaned.csv')
@@ -19,7 +29,7 @@ DATA_PATH = next(
     None
 ) or exit("Erro: Arquivo 'intel_lab_data_cleaned.csv' não encontrado.")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../ml_results_random_forest')
-CLIENT_ID = sys.argv[1] if len(sys.argv) > 1 else 'client1'
+CLIENT_ID = sys.argv[1] if len(sys.argv) > 1 else 'client2'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
@@ -49,7 +59,8 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, client_id, feature_name
             n_estimators=prev_params.get('n_estimators', 18),
             max_depth=prev_params.get('max_depth', 8),
             min_samples_leaf=prev_params.get('min_samples_leaf', 2),
-            min_samples_split=prev_params.get('min_samples_split', 3)
+            min_samples_split=prev_params.get('min_samples_split', 3),
+            bootstrap=to_bool(prev_params.get('bootstrap', True))
         )
     else:
         print("[INFO] Nenhum parâmetro anterior encontrado. Treinamento do zero...")
@@ -118,7 +129,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, client_id, feature_name
         'min_samples_split': rf.min_samples_split,
         'min_samples_leaf': rf.min_samples_leaf,
         'max_features': rf.max_features,
-        'bootstrap': rf.bootstrap
+        'bootstrap': bool(rf.bootstrap)
     }
     with open(os.path.join(OUTPUT_DIR, f'params_{client_id}.json'), 'w') as f:
         json.dump(params_dict, f, indent=4)
