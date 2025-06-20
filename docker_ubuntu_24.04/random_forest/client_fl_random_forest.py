@@ -5,7 +5,7 @@ import threading
 import time
 
 SERVER_IP = '192.168.0.17'
-PORT_RECEIVE = 5001
+PORT_RECEIVE = 5002
 PORT_SEND = 5000
 
 CLIENT_ID = 'client3'

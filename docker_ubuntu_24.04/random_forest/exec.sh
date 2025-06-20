@@ -11,7 +11,7 @@ IMAGE_NAME="fl-env"
 #   echo "[DOCKER] Image '$IMAGE_NAME' already exists. Skipping build."
 # fi
 
-docker build -t $IMAGE_NAME ..
+#docker build -t $IMAGE_NAME ..
 
 echo "[DOCKER] Running Random Forest container..."
 
